@@ -1,49 +1,37 @@
 package com.joesemper.justnotes.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.joesemper.justnotes.data.model.Note
+import kotlin.random.Random
 
-object Repository {
+private val idRandom = Random(0)
+val noteId: Long
+    get() = idRandom.nextLong()
 
-    var notes: MutableList<Note> = mutableListOf(
-        Note(
-            title = "Моя первая заметка",
-            note = "Kotlin очень краткий, но при этом выразительный язык",
-            color = 0xfff06292.toInt()
-        ),
-        Note(
-            title = "Моя первая заметка",
-            note = "Kotlin очень краткий, но при этом выразительный язык",
-            color = 0xff9575cd.toInt()
-        ),
-        Note(
-            title = "Моя первая заметка",
-            note = "Kotlin очень краткий, но при этом выразительный язык",
-            color = 0xff64b5f6.toInt()
-        ),
-        Note(
-            title = "Моя первая заметка",
-            note = "Kotlin очень краткий, но при этом выразительный язык",
-            color = 0xff4db6ac.toInt()
-        ),
-        Note(
-            title = "Моя первая заметка",
-            note = "Kotlin очень краткий, но при этом выразительный язык",
-            color = 0xffb2ff59.toInt()
-        ),
-        Note(
-            title = "Моя первая заметка",
-            note = "Kotlin очень краткий, но при этом выразительный язык",
-            color = 0xffffeb3b.toInt()
-        ),
-        Note(
-            title = "Моя первая заметка",
-            note = "Kotlin очень краткий, но при этом выразительный язык",
-            color = 0xffff6e40.toInt()
-        ),
-        Note(
-            title = "Моя первая заметка",
-            note = "Kotlin очень краткий, но при этом выразительный язык",
-            color = 0xfff06292.toInt()
+object Repository : NotesRepository {
+    private val notes: MutableList<Note> = mutableListOf()
+
+    private val allNotes = MutableLiveData(getListForNotify())
+
+    override fun observeNotes(): LiveData<List<Note>> {
+        return allNotes
+    }
+
+    override fun addOrReplaceNote(newNote: Note) {
+        notes.find { it.id == newNote.id }?.let {
+            if (it == newNote) return
+            notes.remove(it)
+        }
+
+        notes.add(newNote)
+
+        allNotes.postValue(
+            getListForNotify()
         )
-    )
+    }
+
+    private fun getListForNotify(): List<Note> = notes.toMutableList().also {
+        it.reverse()
+    }
 }
