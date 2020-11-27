@@ -5,9 +5,7 @@ import android.os.Parcelable
 import androidx.core.content.ContextCompat
 import com.joesemper.justnotes.R
 import com.joesemper.justnotes.data.noteId
-import com.joesemper.justnotes.ui.MainActivity
 import kotlinx.android.parcel.Parcelize
-import kotlin.random.Random
 
 @Parcelize
 data class Note(

@@ -1,11 +1,19 @@
 package com.joesemper.justnotes.presentation
 
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.joesemper.justnotes.data.Repository
 import com.joesemper.justnotes.data.model.Color
 import com.joesemper.justnotes.data.model.Note
+import com.joesemper.justnotes.data.notesRepository
 
 class NoteViewModel(var note: Note?) : ViewModel() {
+
+    private val showErrorLiveData = MutableLiveData<Boolean>()
+
+    private val lifecycleOwner: LifecycleOwner = LifecycleOwner { viewModelLifecycle }
+    private val viewModelLifecycle = LifecycleRegistry(lifecycleOwner).also {
+        it.currentState = Lifecycle.State.RESUMED
+    }
 
     fun updateNote(text: String) {
         note = (note ?: generateNote()).copy(note = text)
@@ -19,12 +27,21 @@ class NoteViewModel(var note: Note?) : ViewModel() {
         note = (note ?: generateNote()).copy(color = color)
     }
 
+    fun saveNote() {
+        note?.let { note ->
+            notesRepository.addOrReplaceNote(note).observe(lifecycleOwner) {
+                it.onFailure {
+                    showErrorLiveData.value = true
+                }
+            }
+        }
+    }
+
+    fun showError(): LiveData<Boolean> = showErrorLiveData
+
     override fun onCleared() {
         super.onCleared()
-
-        note?.let {
-            Repository.addOrReplaceNote(it)
-        }
+        viewModelLifecycle.currentState = Lifecycle.State.DESTROYED
     }
 
     private fun generateNote(): Note {

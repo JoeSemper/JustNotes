@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
@@ -42,6 +43,14 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
             noteCard.setCardBackgroundColor(it.color.mapToColor(context as AppCompatActivity))
         }
 
+        viewModel.showError().observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), getString(R.string.error_while_saving), Toast.LENGTH_LONG).show()
+        }
+
+        button.setOnClickListener {
+            viewModel.saveNote()
+        }
+
         titleEt.addTextChangedListener {
             viewModel.updateTitle(it?.toString() ?: "")
         }
@@ -55,12 +64,16 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
-        toolbar.setNavigationOnClickListener { (activity as AppCompatActivity).onBackPressed() }
+        toolbar.setNavigationOnClickListener {
+            (activity as AppCompatActivity).onBackPressed()
+        }
+        toolbar.title = viewModel.note?.title ?: getString(R.string.note_creation_title)
     }
 
     private fun initColorChoose() {
         colorChooseButton.setOnClickListener {
-            val currentColor = viewModel.note?.color?.colorId ?: -1 // тут note всегда null, не смог разобраться почему
+            val currentColor = viewModel.note?.color?.colorId
+                ?: -1 // тут note всегда null, не смог разобраться почему
             val arrayOfColors = getArrayOfColors()
 
             val builder = AlertDialog.Builder(context as AppCompatActivity)

@@ -8,4 +8,8 @@
     <string name="color_select_title">Choose note color</string>
     <string name="cancel">Cancel</string>
     <string name="random">Random</string>
+    <string name="note_creation_title">New note</string>
+    <string name="save">Save</string>
+    <string name="color_select">Color select</string>
+    <string name="error_while_saving">Error while saving note!</string>
 </resources>
