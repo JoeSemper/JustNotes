@@ -1,16 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
-        android:id="@+id/action_add"
-        android:icon="@drawable/ic_baseline_add_box_24"
-        android:orderInCategory="10"
-        android:title="@string/add"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_delete"
-        android:icon="@drawable/ic_baseline_delete_24"
-        android:orderInCategory="20"
-        android:title="@string/delete"
-        app:showAsAction="ifRoom" />
 </menu>

@@ -3,4 +3,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add">Add</string>
     <string name="delete">Delete</string>
+    <string name="title">Title</string>
+    <string name="note_text">Note text</string>
+    <string name="color_select_title">Choose note color</string>
+    <string name="cancel">Cancel</string>
+    <string name="random">Random</string>
 </resources>

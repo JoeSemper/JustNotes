@@ -3,39 +3,51 @@ package com.joesemper.justnotes.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joesemper.justnotes.R
 import com.joesemper.justnotes.data.model.Note
 import kotlinx.android.synthetic.main.item_note.view.*
 
-class MainAdapter : RecyclerView.Adapter<NoteViewHolder>() {
-
-    var notes: List<Note> = listOf()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.item_note, parent, false)
-        return NoteViewHolder(view)
+val DIFF_UTIL: DiffUtil.ItemCallback<Note> = object : DiffUtil.ItemCallback<Note>() {
+    override fun areItemsTheSame(oldItem: Note, newItem: Note): Boolean {
+        return oldItem == newItem
     }
 
-    override fun getItemCount() = notes.size
-
-    override fun onBindViewHolder(holder: NoteViewHolder, position: Int): Unit {
-        holder.bind(notes[position])
+    override fun areContentsTheSame(oldItem: Note, newItem: Note): Boolean {
+        return true
     }
 }
 
-class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class MainAdapter(val noteHandler: (Note) -> Unit) :
+    ListAdapter<Note, MainAdapter.NoteViewHolder>(DIFF_UTIL) {
 
-    fun bind(note: Note) {
-        with(itemView) {
-            title.text = note.title
-            body.text = note.note
-            setBackgroundColor(note.color)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
+        return NoteViewHolder(parent)
+    }
+
+    override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+
+    inner class NoteViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
+        LayoutInflater.from(parent.context).inflate(R.layout.item_note, parent, false)
+    ) {
+        private lateinit var currentNote: Note
+
+        private val clickListener: View.OnClickListener = View.OnClickListener {
+            noteHandler(currentNote)
+        }
+
+        fun bind(item: Note) {
+            currentNote = item
+            with(itemView) {
+                title.text = item.title
+                body.text = item.note
+                setBackgroundColor(item.color.mapToColor(context))
+                setOnClickListener(clickListener)
+            }
         }
     }
 }

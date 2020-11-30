@@ -26,24 +26,27 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         )
     }
 
-    private val adapter = MainAdapter()
-
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        val adapter = MainAdapter {
+            navigateToNote(it)
+        }
 
         mainRecycler.adapter = adapter
 
-        viewMode.viewState().observe(viewLifecycleOwner, Observer<MainViewState> { t ->
-            t?.let { adapter.notes = it.notes }
-        })
+        viewMode.observeViewState().observe(viewLifecycleOwner) {
+            when (it) {
+                is MainViewState.Value -> {
+                    adapter.submitList(it.notes)
+                }
+                MainViewState.EMPTY -> Unit
+            }
+        }
 
-        floatingActionButton.setOnClickListener(View.OnClickListener { addNewNote() })
-
-        setHasOptionsMenu(true)
+        floatingActionButton.setOnClickListener {
+            navigateToCreation()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -51,21 +54,12 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         inflater.inflate(R.menu.main, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
-            R.id.action_add -> addNewNote()
-            R.id.action_delete -> deleteNote()
-        }
-        return true
+    private fun navigateToNote(note: Note) {
+        (requireActivity() as MainActivity).navigateTo(NoteFragment.create(note))
     }
 
-    private fun addNewNote(){
-        Repository.notes.add(Note("New note", "New note"))
-        adapter.notes = Repository.notes
+    private fun navigateToCreation() {
+        (requireActivity() as MainActivity).navigateTo(NoteFragment.create(null))
     }
 
-    private fun deleteNote(){
-        Repository.notes.removeLast()
-        adapter.notes = Repository.notes
-    }
 }
