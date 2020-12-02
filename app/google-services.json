@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "462409246169",
+    "firebase_url": "https://just-notes-1f970.firebaseio.com",
+    "project_id": "just-notes-1f970",
+    "storage_bucket": "just-notes-1f970.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:462409246169:android:04a5064d85e4add5c2e5c8",
+        "android_client_info": {
+          "package_name": "com.joesemper.justnotes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "462409246169-uuahikq8f7d1ur29c8kdgsqf2e239o0j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.joesemper.justnotes",
+            "certificate_hash": "b5b0153f6b2f7151d8048417aa1542c270f9b3c6"
+          }
+        },
+        {
+          "client_id": "462409246169-7eciu0142r2uo02jbsjp0jfus9i2il84.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbvEmEboZia00xXTfNDt3CWmTBvwszeKk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "462409246169-7eciu0142r2uo02jbsjp0jfus9i2il84.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
