@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import com.joesemper.justnotes.R
 import com.joesemper.justnotes.data.model.*
 import com.joesemper.justnotes.presentation.NoteViewModel

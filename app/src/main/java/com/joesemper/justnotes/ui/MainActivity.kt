@@ -1,5 +1,7 @@
 package com.joesemper.justnotes.ui
 
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -16,8 +18,12 @@ class MainActivity : AppCompatActivity() {
     fun navigateTo(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction
-            .add(R.id.fragment_container_view, fragment)
+            .replace(R.id.fragment_container_view, fragment)
             .addToBackStack("notes")
             .commit()
+    }
+
+    companion object {
+        fun getStartIntent(context: Context) = Intent(context, MainActivity::class.java)
     }
 }

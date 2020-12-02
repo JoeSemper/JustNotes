@@ -1,7 +1,6 @@
 package com.joesemper.justnotes.presentation
 
 import androidx.lifecycle.*
-import com.joesemper.justnotes.data.Repository
 import com.joesemper.justnotes.data.model.Color
 import com.joesemper.justnotes.data.model.Note
 import com.joesemper.justnotes.data.notesRepository
