@@ -20,5 +20,3 @@ class NotesRepositoryImpl(private val provider: FireStoreDatabaseProvider) : Not
         return provider.addOrReplaceNote(newNote)
     }
 }
-
-val notesRepository: NotesRepository by lazy { NotesRepositoryImpl(FireStoreDatabaseProvider()) }

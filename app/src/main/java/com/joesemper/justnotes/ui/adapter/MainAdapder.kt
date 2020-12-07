@@ -31,8 +31,15 @@ class MainAdapter(val noteHandler: (Note) -> Unit) :
         holder.bind(getItem(position))
     }
 
-    inner class NoteViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
-        LayoutInflater.from(parent.context).inflate(R.layout.item_note, parent, false)
+    inner class NoteViewHolder(
+        parent: ViewGroup,
+        private val binding: ItemNoteBinding = ItemNoteBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false,
+        )
+    ) : RecyclerView.ViewHolder(
+        binding.root
     ) {
         private lateinit var currentNote: Note
 
