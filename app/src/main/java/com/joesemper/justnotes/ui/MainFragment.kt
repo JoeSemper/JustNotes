@@ -1,10 +1,9 @@
 package com.joesemper.justnotes.ui
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.joesemper.justnotes.R
@@ -13,7 +12,7 @@ import com.joesemper.justnotes.presentation.MainViewModel
 import com.joesemper.justnotes.presentation.MainViewState
 import com.joesemper.justnotes.ui.adapter.MainAdapter
 import kotlinx.android.synthetic.main.fragment_main.*
-
+import kotlinx.android.synthetic.main.fragment_main.toolbar
 
 class MainFragment : Fragment(R.layout.fragment_main) {
 
@@ -29,6 +28,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         val adapter = MainAdapter {
             navigateToNote(it)
         }
+
+        initToolbar()
 
         mainRecycler.adapter = adapter
 
@@ -46,10 +47,10 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.main, menu)
+    private fun initToolbar() {
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
     }
+
 
     private fun navigateToNote(note: Note) {
         (requireActivity() as MainActivity).navigateTo(NoteFragment.create(note))
@@ -58,5 +59,4 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     private fun navigateToCreation() {
         (requireActivity() as MainActivity).navigateTo(NoteFragment.create(null))
     }
-
 }

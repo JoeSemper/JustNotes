@@ -68,10 +68,14 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    implementation 'com.google.firebase:firebase-core:16.0.3'
-    implementation 'com.google.firebase:firebase-firestore:17.1.0'
-
     implementation 'com.android.support:multidex:1.0.3'
+
+    def koin_ver = '2.1.6'
+    implementation "org.koin:koin-core:$koin_ver"
+    implementation "org.koin:koin-core-ext:$koin_ver"
+    implementation "org.koin:koin-android:$koin_ver"
+    implementation "org.koin:koin-androidx-scope:$koin_ver"
+    implementation "org.koin:koin-androidx-viewmodel:$koin_ver"
 }
 
 apply plugin: 'com.google.gms.google-services'
