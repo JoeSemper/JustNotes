@@ -1,7 +1,6 @@
 package com.joesemper.justnotes.data
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.joesemper.justnotes.data.db.FireStoreDatabaseProvider
 import com.joesemper.justnotes.data.model.Note
 import kotlin.random.Random
@@ -10,7 +9,9 @@ private val idRandom = Random(0)
 val noteId: Long
     get() = idRandom.nextLong()
 
-class Repository(val provider: FireStoreDatabaseProvider) : NotesRepository {
+class NotesRepositoryImpl(private val provider: FireStoreDatabaseProvider) : NotesRepository {
+    override fun getCurrentUser() = provider.getCurrentUser()
+
     override fun observeNotes(): LiveData<List<Note>> {
         return provider.observeNotes()
     }
@@ -20,4 +21,4 @@ class Repository(val provider: FireStoreDatabaseProvider) : NotesRepository {
     }
 }
 
-val notesRepository: NotesRepository by lazy { Repository(FireStoreDatabaseProvider()) }
+val notesRepository: NotesRepository by lazy { NotesRepositoryImpl(FireStoreDatabaseProvider()) }

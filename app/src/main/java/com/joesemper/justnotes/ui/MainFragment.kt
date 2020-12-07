@@ -3,14 +3,11 @@ package com.joesemper.justnotes.ui
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
-import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import com.joesemper.justnotes.R
-import com.joesemper.justnotes.data.Repository
 import com.joesemper.justnotes.data.model.Note
 import com.joesemper.justnotes.presentation.MainViewModel
 import com.joesemper.justnotes.presentation.MainViewState
