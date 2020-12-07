@@ -7,27 +7,28 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.joesemper.justnotes.R
 import com.joesemper.justnotes.data.model.*
+import com.joesemper.justnotes.databinding.FragmentNoteBinding
 import com.joesemper.justnotes.presentation.NoteViewModel
 import kotlinx.android.synthetic.main.fragment_note.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
-class NoteFragment : Fragment(R.layout.fragment_note) {
+class NoteFragment : Fragment() {
     private val note: Note? by lazy(LazyThreadSafetyMode.NONE) { arguments?.getParcelable(NOTE_KEY) }
 
-    private val viewModel by lazy(LazyThreadSafetyMode.NONE) {
-        ViewModelProvider(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return NoteViewModel(note) as T
-            }
-        }).get(
-            NoteViewModel::class.java
-        )
+    private val viewModel by viewModel<NoteViewModel> {
+        parametersOf(note)
     }
+
+    private var _binding: FragmentNoteBinding? = null
+    private val binding: FragmentNoteBinding get() = _binding!!
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,26 +39,33 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
     }
 
     private fun initNote() {
-        viewModel.note?.let {
-            titleEt.setText(it.title)
-            bodyEt.setText(it.note)
-            noteCard.setCardBackgroundColor(it.color.mapToColor(context as AppCompatActivity))
-        }
 
-        viewModel.showError().observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), getString(R.string.error_while_saving), Toast.LENGTH_LONG).show()
-        }
+        with(binding) {
+            viewModel.note?.let {
+                titleEt.isVisible = true
+                titleEt.setText(it.title)
+                bodyEt.setText(it.note)
+            }
 
-        button.setOnClickListener {
-            viewModel.saveNote()
-        }
+            viewModel.showError().observe(viewLifecycleOwner) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.error_while_saving),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
 
-        titleEt.addTextChangedListener {
-            viewModel.updateTitle(it?.toString() ?: "")
-        }
+            button.setOnClickListener {
+                viewModel.saveNote()
+            }
 
-        bodyEt.addTextChangedListener {
-            viewModel.updateNote(it?.toString() ?: "")
+            titleEt.addTextChangedListener {
+                viewModel.updateTitle(it?.toString() ?: "")
+            }
+
+            bodyEt.addTextChangedListener {
+                viewModel.updateNote(it?.toString() ?: "")
+            }
         }
     }
 
@@ -93,6 +101,11 @@ class NoteFragment : Fragment(R.layout.fragment_note) {
             val dialog = builder.create()
             dialog.show()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun updateColor(color: Color) {
