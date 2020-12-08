@@ -18,5 +18,7 @@
     <string name="logout_dialog_cancel">Cancel</string>
     <string name="logout">Logout</string>
     <string name="ok_button">Ok</string>
+    <string name="apply">Apply</string>
+    <string name="delete_dialog_message">Delete note?</string>
 
 </resources>

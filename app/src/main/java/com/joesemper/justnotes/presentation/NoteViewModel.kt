@@ -36,6 +36,10 @@ class NoteViewModel(private val notesRepository: NotesRepository, var note: Note
         }
     }
 
+    fun deleteNote(noteId: String) {
+        notesRepository.deleteNote(noteId)
+    }
+
     fun showError(): LiveData<Boolean> = showErrorLiveData
 
     override fun onCleared() {

@@ -19,4 +19,7 @@ class NotesRepositoryImpl(private val provider: FireStoreDatabaseProvider) : Not
     override fun addOrReplaceNote(newNote: Note): LiveData<Result<Note>> {
         return provider.addOrReplaceNote(newNote)
     }
+
+    override fun deleteNote(noteId: String): LiveData<Result<Unit>> = provider.deleteNote(noteId)
+
 }

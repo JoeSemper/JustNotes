@@ -58,6 +58,15 @@ class FireStoreDatabaseProvider : DatabaseProvider {
         return result
     }
 
+    override fun deleteNote(noteId: String): LiveData<Result<Unit>> =
+        MutableLiveData<Result<Unit>>().apply {
+            getUserNotesCollection().document(noteId).delete()
+                .addOnSuccessListener {
+                    value = Result.success(Unit)
+                }.addOnFailureListener {
+                    value = Result.failure(it)
+                }
+        }
     private fun getUserNotesCollection() = currentUser?.let {
         db.collection(USERS_COLLECTION).document(it.uid).collection(NOTES_COLLECTION)
     } ?: throw NoAuthException()
@@ -84,6 +93,7 @@ class FireStoreDatabaseProvider : DatabaseProvider {
             }
         )
     }
+
 
     private inline fun handleNotesReference(
         referenceHandler: (CollectionReference) -> Unit,
