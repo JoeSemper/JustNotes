@@ -2,8 +2,10 @@ package com.joesemper.justnotes.ui
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -11,7 +13,6 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.observe
 import com.joesemper.justnotes.R
 import com.joesemper.justnotes.data.model.*
 import com.joesemper.justnotes.databinding.FragmentNoteBinding
@@ -30,6 +31,16 @@ class NoteFragment : Fragment() {
     private var _binding: FragmentNoteBinding? = null
     private val binding: FragmentNoteBinding get() = _binding!!
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentNoteBinding.inflate(inflater, container, false)
+
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -45,6 +56,7 @@ class NoteFragment : Fragment() {
                 titleEt.isVisible = true
                 titleEt.setText(it.title)
                 bodyEt.setText(it.note)
+                noteCard.setCardBackgroundColor(it.color.mapToColor(context as AppCompatActivity))
             }
 
             viewModel.showError().observe(viewLifecycleOwner) {
