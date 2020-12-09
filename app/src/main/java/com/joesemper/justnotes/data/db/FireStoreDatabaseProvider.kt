@@ -11,6 +11,12 @@ import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.joesemper.justnotes.data.model.Note
 import com.joesemper.justnotes.data.model.User
 import com.joesemper.justnotes.errors.NoAuthException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 private const val NOTES_COLLECTION = "notes"
 private const val USERS_COLLECTION = "users"
@@ -19,54 +25,57 @@ const val TAG = "FireStoreDatabase"
 
 class FireStoreDatabaseProvider : DatabaseProvider {
     private val db = FirebaseFirestore.getInstance()
-    private val result = MutableLiveData<List<Note>>()
+    private val result = MutableStateFlow<List<Note>?>(null)
     private val currentUser: FirebaseUser?
         get() = FirebaseAuth.getInstance().currentUser
 
     private var subscribedOnDb = false
 
-    override fun observeNotes(): LiveData<List<Note>> {
+    override fun observeNotes(): Flow<List<Note>> {
         if (!subscribedOnDb) subscribeForDbChanging()
-        return result
+        return result.filterNotNull()
     }
 
     override fun getCurrentUser() = currentUser?.run { User(displayName, email) }
 
-    override fun addOrReplaceNote(newNote: Note): LiveData<Result<Note>> {
-        val result = MutableLiveData<Result<Note>>()
+    override suspend fun addOrReplaceNote(newNote: Note) {
+        suspendCoroutine<Unit> { continuation ->
+            handleNotesReference(
+                {
+                    getUserNotesCollection()
+                        .document(newNote.id.toString())
+                        .set(newNote)
+                        .addOnSuccessListener {
+                            Log.d(TAG, "Note $newNote is saved")
+                            continuation.resumeWith(Result.success(Unit))
+                        }
+                        .addOnFailureListener {
+                            Log.e(TAG, "Error saving note $newNote, message: ${it.message}")
+                            continuation.resumeWithException(it)
+                        }
 
-        handleNotesReference(
-            {
-                getUserNotesCollection()
-                    .document(newNote.id.toString())
-                    .set(newNote)
-                    .addOnSuccessListener {
-                        Log.d(TAG, "Note $newNote is saved")
-                        result.value = Result.success(newNote)
-                    }
-                    .addOnFailureListener {
-                        Log.e(TAG, "Error saving note $newNote, message: ${it.message}")
-                        result.value = Result.failure(it)
-                    }
-
-            }, {
-                Log.e(TAG, "Error getting reference note $newNote, message: ${it.message}")
-                result.value = Result.failure(it)
-            }
-        )
-
-        return result
+                }, {
+                    Log.e(TAG, "Error getting reference note $newNote, message: ${it.message}")
+                    continuation.resumeWithException(it)
+                }
+            )
+        }
     }
 
-    override fun deleteNote(noteId: String): LiveData<Result<Unit>> =
-        MutableLiveData<Result<Unit>>().apply {
-            getUserNotesCollection().document(noteId).delete()
+    override suspend fun deleteNote(noteId: String) {
+        suspendCancellableCoroutine<Unit> { continuation ->
+            getUserNotesCollection()
+                .document(noteId)
+                .delete()
                 .addOnSuccessListener {
-                    value = Result.success(Unit)
-                }.addOnFailureListener {
-                    value = Result.failure(it)
+                    continuation.resumeWith(Result.success(Unit))
+                }
+                .addOnFailureListener {
+                    continuation.resumeWithException(it)
                 }
         }
+    }
+
     private fun getUserNotesCollection() = currentUser?.let {
         db.collection(USERS_COLLECTION).document(it.uid).collection(NOTES_COLLECTION)
     } ?: throw NoAuthException()
