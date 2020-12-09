@@ -1,6 +1,5 @@
 package com.joesemper.justnotes.ui
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
@@ -11,11 +10,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.joesemper.justnotes.R
 import com.joesemper.justnotes.data.model.*
-import com.joesemper.justnotes.data.noteId
 import com.joesemper.justnotes.databinding.FragmentNoteBinding
 import com.joesemper.justnotes.presentation.NoteViewModel
 import kotlinx.android.synthetic.main.fragment_note.*
