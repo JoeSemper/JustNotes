@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.joesemper.justnotes.R
 import com.joesemper.justnotes.data.model.Note
+import com.joesemper.justnotes.databinding.ItemNoteBinding
 import kotlinx.android.synthetic.main.item_note.view.*
 
 val DIFF_UTIL: DiffUtil.ItemCallback<Note> = object : DiffUtil.ItemCallback<Note>() {
@@ -31,8 +32,15 @@ class MainAdapter(val noteHandler: (Note) -> Unit) :
         holder.bind(getItem(position))
     }
 
-    inner class NoteViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
-        LayoutInflater.from(parent.context).inflate(R.layout.item_note, parent, false)
+    inner class NoteViewHolder(
+        parent: ViewGroup,
+        private val binding: ItemNoteBinding = ItemNoteBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false,
+        )
+    ) : RecyclerView.ViewHolder(
+        binding.root
     ) {
         private lateinit var currentNote: Note
 

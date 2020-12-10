@@ -1,11 +1,11 @@
 package com.joesemper.justnotes.presentation
 
 import androidx.lifecycle.*
+import com.joesemper.justnotes.data.NotesRepository
 import com.joesemper.justnotes.data.model.Color
 import com.joesemper.justnotes.data.model.Note
-import com.joesemper.justnotes.data.notesRepository
 
-class NoteViewModel(var note: Note?) : ViewModel() {
+class NoteViewModel(private val notesRepository: NotesRepository, var note: Note?) : ViewModel() {
 
     private val showErrorLiveData = MutableLiveData<Boolean>()
 
