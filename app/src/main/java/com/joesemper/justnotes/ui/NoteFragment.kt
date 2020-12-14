@@ -1,6 +1,5 @@
 package com.joesemper.justnotes.ui
 
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
@@ -11,8 +10,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.joesemper.justnotes.R
 import com.joesemper.justnotes.data.model.*
 import com.joesemper.justnotes.databinding.FragmentNoteBinding
@@ -56,7 +53,7 @@ class NoteFragment : Fragment() {
                 titleEt.isVisible = true
                 titleEt.setText(it.title)
                 bodyEt.setText(it.note)
-                noteCard.setCardBackgroundColor(it.color.mapToColor(context as AppCompatActivity))
+                noteCard.setCardBackgroundColor(it.color.mapToColor(requireContext()))
             }
 
             viewModel.showError().observe(viewLifecycleOwner) {
@@ -67,8 +64,13 @@ class NoteFragment : Fragment() {
                 ).show()
             }
 
-            button.setOnClickListener {
+            buttonApply.setOnClickListener {
                 viewModel.saveNote()
+                (activity as AppCompatActivity).onBackPressed()
+            }
+
+            buttonDellNote.setOnClickListener {
+                deleteNote()
             }
 
             titleEt.addTextChangedListener {
@@ -82,22 +84,26 @@ class NoteFragment : Fragment() {
     }
 
     private fun initToolbar() {
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
-        toolbar.setNavigationOnClickListener {
-            (activity as AppCompatActivity).onBackPressed()
+        with(requireActivity() as AppCompatActivity) {
+            setSupportActionBar(toolbar)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.setDisplayShowHomeEnabled(true)
         }
-        toolbar.title = viewModel.note?.title ?: getString(R.string.note_creation_title)
+
+        with(toolbar) {
+            setNavigationOnClickListener {
+                (activity as AppCompatActivity).onBackPressed()
+            }
+            title = viewModel.note?.title ?: getString(R.string.note_creation_title)
+        }
     }
 
     private fun initColorChoose() {
         colorChooseButton.setOnClickListener {
-            val currentColor = viewModel.note?.color?.colorId
-                ?: -1 // тут note всегда null, не смог разобраться почему
+            val currentColor = viewModel.note?.color?.colorId ?: -1
             val arrayOfColors = getArrayOfColors()
 
-            val builder = AlertDialog.Builder(context as AppCompatActivity)
+            val builder = AlertDialog.Builder(requireContext())
             builder.setTitle(getString(R.string.color_select_title))
                 .setSingleChoiceItems(arrayOfColors, currentColor) { dialogInterface, i ->
                     val color = getColorByNumber(i)
@@ -119,6 +125,20 @@ class NoteFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+
+    private fun deleteNote() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setMessage(R.string.delete_dialog_message)
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
+            .setPositiveButton(getString(R.string.ok_button)) {dialog, _ ->
+                viewModel.deleteNote(note?.id.toString())
+                (activity as AppCompatActivity).onBackPressed()
+            }
+        val dialog = builder.create()
+        dialog.show()
+    }
+
 
     private fun updateColor(color: Color) {
         viewModel.updateColor(color)
