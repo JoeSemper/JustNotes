@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.joesemper.justnotes.data.NotesRepository
 import com.joesemper.justnotes.data.model.Color
 import com.joesemper.justnotes.data.model.Note
+import kotlinx.coroutines.launch
 
 class NoteViewModel(private val notesRepository: NotesRepository, var note: Note?) : ViewModel() {
 
@@ -27,17 +28,25 @@ class NoteViewModel(private val notesRepository: NotesRepository, var note: Note
     }
 
     fun saveNote() {
-        note?.let { note ->
-            notesRepository.addOrReplaceNote(note).observe(lifecycleOwner) {
-                it.onFailure {
-                    showErrorLiveData.value = true
-                }
+        viewModelScope.launch {
+            val noteValue = note ?: return@launch
+
+            try {
+                notesRepository.addOrReplaceNote(noteValue)
+            } catch (th: Throwable) {
+                showErrorLiveData.value = true
             }
         }
     }
 
     fun deleteNote(noteId: String) {
-        notesRepository.deleteNote(noteId)
+        viewModelScope.launch {
+            try {
+                notesRepository.deleteNote(noteId)
+            } catch (th: Throwable) {
+                showErrorLiveData.value = true
+            }
+        }
     }
 
     fun showError(): LiveData<Boolean> = showErrorLiveData
